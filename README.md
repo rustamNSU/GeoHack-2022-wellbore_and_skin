@@ -10,3 +10,4 @@
 - pip install scipy
 - pip install pyside6
 - pip install pandas
+- pip install mpmath
