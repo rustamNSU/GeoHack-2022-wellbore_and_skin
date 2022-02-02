@@ -1,6 +1,6 @@
 import pandas as pd
 
-data = pd.ExcelFile("data\GDIS.xlsx")
+data = pd.ExcelFile("data/GDIS.xlsx")
 
 data.sheet_names
 
