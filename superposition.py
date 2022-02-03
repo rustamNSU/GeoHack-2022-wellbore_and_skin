@@ -3,11 +3,15 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, q, t):
+def pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, q, t, tp=0):
     Cd = Cs / ( 2*math.pi*Ct*h*rw**2 )
     td = t*(k / (phi*mu*Ct*rw**2))
-    pwD = p_wd(Skin, Cd, td)
+    tpd = tp*(k / (phi*mu*Ct*rw**2))
+    pwD = p_wd(Skin, Cd, td, tpd)
     pwf = pi - pwD*q*B*mu / (2*math.pi*k*h)
+    # print("tp={}".format(tp))
+    # print(t<tp)
+    pwf[t<tp]=pi
     return pwf
 
 
@@ -23,13 +27,19 @@ if __name__ == "__main__":
 
 
     k = 2.0e-15
-    Skin = -5
-    t = np.linspace(1, 24*3600*10, 100)
+    Skin = 0
+    t = np.linspace(1, 24*3600*5, 1000)
     Cs = 5*( 2*math.pi*Ct*h*rw**2 )
+
+    pwf1 = pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, q, t)
+    pwf2 = pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, -q, t, 43200)
+    pwf_sum = pwf2 + pwf1
+
     fig, ax = plt.subplots()   
-    # ax.plot(td, pwD)
-    ax.plot(t, pwf(k, 0, 0, B, Ct, h, pi, mu, rw, q, t), label="Cs=0, Skin=0")
-    ax.plot(t, pwf(k, 5, 0, B, Ct, h, pi, mu, rw, q, t), label="Cs=0, Skin=5")
+    ax.plot(t, pwf_sum)
+
+    # ax.plot(t, pwf(k, 0, 0, B, Ct, h, pi, mu, rw, q, t), label="Cs=0, Skin=0")
+    # ax.plot(t, pwf(k, 0, 0, B, Ct, h, pi, mu, rw, q, t, 10000), label="Cs=0, Skin=0, tp=1000")
     # ax.plot(t, pwf(k, 0, Cs, B, Ct, h, pi, mu, rw, q, t), label="Cs={}, Skin=0".format(Cs))
     # ax.plot(t, pwf(k, 5, Cs, B, Ct, h, pi, mu, rw, q, t), label="Cs={}, Skin=5".format(Cs))
     # ax.plot(t, pwf(k, -5, Cs, B, Ct, h, pi, mu, rw, q, t), label="Cs={}, Skin=-5".format(Cs))
