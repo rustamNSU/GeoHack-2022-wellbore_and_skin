@@ -25,7 +25,7 @@ def p_wd(Skin, CDstor, tt):
 if __name__ == "__main__":
     fp = lambda p: laplace_p_wd(0, 0, p)
 
-    tt = np.linspace(0.1, 1000, 50)
+    tt = np.linspace(0.1, 10000, 50)
 
     fig, ax = plt.subplots()   
 
@@ -38,8 +38,8 @@ if __name__ == "__main__":
     ax.plot(tt, p_wd(5, 5, tt), label="CD=5, Skin=5")
     ax.set_xscale('log') 
     # ax.set_yscale('log') 
-    ax.set_xlabel("CD=0, логарифмическая шкала")                              # подпись у горизонтальной оси х
-    # ax.set_ylabel("y")                              # подпись у вертикальной оси y
+    ax.set_xlabel("t")                              # подпись у горизонтальной оси х
+    ax.set_ylabel("pD")                              # подпись у вертикальной оси y
     ax.legend()                                     # показывать условные обозначения
 
     plt.show()                                
