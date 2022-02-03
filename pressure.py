@@ -25,16 +25,19 @@ def p_wd(Skin, CDstor, tt):
 if __name__ == "__main__":
     fp = lambda p: laplace_p_wd(0, 0, p)
 
-    tt = np.linspace(1, 1000, 50)
+    tt = np.linspace(0.1, 1000, 50)
 
     fig, ax = plt.subplots()   
 
     # ax.plot(tt, [mp.invertlaplace(fp, t, method='stehfest', degree = 20) for t in tt], color="black")
 
-    ax.plot(tt, p_wd(0 , 0, tt), color="blue", label="p_wd")
+    ax.plot(tt, p_wd(0 , 0, tt), label="CD=0, Skin=0")
     # print ( max( [mp.invertlaplace(fp, t, method='stehfest', degree = 20) - p_wd(0 , 0, tt) for t in tt] ) )     # max не работает!!!!
-    ax.plot(tt, [exact_solution(t, 1.0) for t in tt], color="red", label="exact solution")
+    ax.plot(tt, p_wd(0, 5, tt), label="CD=5, Skin=0")
+    ax.plot(tt, p_wd(5, 0, tt), label="CD=0, Skin=5")
+    ax.plot(tt, p_wd(5, 5, tt), label="CD=5, Skin=5")
     ax.set_xscale('log') 
+    # ax.set_yscale('log') 
     ax.set_xlabel("CD=0, логарифмическая шкала")                              # подпись у горизонтальной оси х
     # ax.set_ylabel("y")                              # подпись у вертикальной оси y
     ax.legend()                                     # показывать условные обозначения
