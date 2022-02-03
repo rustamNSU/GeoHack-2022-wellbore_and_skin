@@ -1,28 +1,37 @@
+from cProfile import label
 from pressure import p_wd
 import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+def param(h, pi, Ct, mu, B, k, Skin, Cs, rw, q, t):
+    Cd = Cs / ( 2*math.pi*Ct*h*rw**2 )
+    td = t*(k / (phi*mu*Ct*rw**2))
+    pwD = p_wd(Skin, Cd, td)
+    pwf = pi - pwD*q*B*mu / (2*math.pi*k*h)
+    return pwf
 
-h = 10
-phi = 0.1
-Ct = 1.0e-5
-pi = 6.0e6
-mu = 7.0e-3
+h = 45
+phi = 0.2
+Ct = 2.03e-9
+pi = 20.0e6
+mu = 1.0e-3
 B = 1
 k = 2.0e-15
-Skin = 0
-Cs = 0
-rw = 1.0e-1
-q = 60.0/24/3600
-t = np.linspace(1, 1000, 50)
+Skin = -5
 
-Cd = Cs / ( 2*math.pi*Ct*h*rw**2 )
-td = t*(k / phi*mu*Ct*rw**2)
-pwD = p_wd(Skin, Cd, td)
-# pwf = pwD*q*B*mu / (2*math.pi*k*h) - pi
-print (pwD)
-# fig, ax = plt.subplots()   
+rw = 0.15
+q = 3.0/24/3600
+t = np.linspace(1, 24*3600*10, 100)
+Cs = 5*( 2*math.pi*Ct*h*rw**2 )
+print("Cs = {}".format(Cs))
+fig, ax = plt.subplots()   
 # ax.plot(td, pwD)
-# ax.legend()                                     # показывать условные обозначения
-# plt.show()      
+ax.plot(t, param(h, pi, Ct, mu, B, k, 0, 0, rw, q, t), label="Cs=0, Skin=0")
+ax.plot(t, param(h, pi, Ct, mu, B, k, 5, 0, rw, q, t), label="Cs=0, Skin=5")
+ax.plot(t, param(h, pi, Ct, mu, B, k, 0, Cs, rw, q, t), label="Cs=!0, Skin=0")
+ax.plot(t, param(h, pi, Ct, mu, B, k, 5, Cs, rw, q, t), label="Cs=!0, Skin=5")
+ax.set_xscale('log') 
+ax.set_yscale('log')
+ax.legend()                                     # показывать условные обозначения
+plt.show()      
