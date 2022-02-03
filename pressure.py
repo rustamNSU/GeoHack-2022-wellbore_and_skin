@@ -1,3 +1,4 @@
+from cmath import exp
 import math
 import numpy as np
 from scipy.special import kv, k0, k1, expi
@@ -8,14 +9,15 @@ import mpmath as mp
 def exact_solution(t, r):
     return -0.5*expi( -r**2 / (4*t) )
 
-def laplace_p_wd(Skin, CDstor, s):
+def laplace_p_wd(Skin, CDstor, s, tp=0):
     s = float(s)
     pwd = (k0(math.sqrt(s)) + math.sqrt(s)*Skin*k1(math.sqrt(s))) / ( ( math.sqrt(s)*k1(math.sqrt(s) ) + CDstor*s*( k0(math.sqrt(s)) + math.sqrt(s)*Skin*k1(math.sqrt(s)) ) ) * s)
+    pwd = math.exp(-tp*s)*pwd
     return pwd 
 
-def p_wd(Skin, CDstor, tt):
-    fp = lambda p: laplace_p_wd(Skin, CDstor, p)
-    p_wd = [mp.invertlaplace(fp, t, method='stehfest', degree = 20) for t in tt]
+def p_wd(Skin, CDstor, tt, tp=0):
+    fp = lambda p: laplace_p_wd(Skin, CDstor, p, tp)
+    p_wd = [mp.invertlaplace(fp, t, method='stehfest', degree = 10) for t in tt]
     return np.array(p_wd)
 
 
