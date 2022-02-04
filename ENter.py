@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (QWidget,QMainWindow,QHBoxLayout,QVBoxLayout,QFileDialog, QLabel, QLineEdit, QGridLayout, QApplication,QPushButton)
+from PySide6.QtWidgets import (QWidget,QMainWindow,QHBoxLayout,QVBoxLayout,QFileDialog, QLabel, QLineEdit, QGridLayout, QApplication,QPushButton)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 import numpy as np
