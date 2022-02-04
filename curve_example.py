@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     k = 2.0e-15
     Skin = 0
-    t = np.linspace(1, 24*3600*1, 100)   #
+    t = np.linspace(1, 40000, 40)   #*3600*1
     Cs = 0         # 5*( 2*math.pi*Ct*h*rw**2 )
     
     pwf0 = pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t)
@@ -38,12 +38,13 @@ if __name__ == "__main__":
     
     
 
-    # f = lambda k, Skin, Cs: pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t)
+    f = lambda x, k_new, Skin_new, Cs_new: pwf(k_new, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, x)
 
 
-    # popt, pcov = curve_fit(pwf, t, pdata)
-    # print("fit: a=%5.3f, b=%5.3f, c=%5.3f".format(popt))
-    # ax.plot(t, pwf(t, *popt))
+    popt, pcov = curve_fit(f, t, pdata, p0=[1e-15, 0, 0])
+    k_new, Skin_new, Cs_new = popt
+    print(k_new, Skin_new, Cs_new)
+    ax.plot(t, f(t,k_new, Skin_new, Cs_new ))
 
 
 
