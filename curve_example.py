@@ -22,29 +22,32 @@ if __name__ == "__main__":
     t = np.linspace(1, 40000, 40)   #*3600*1
     Cs = 0         # 5*( 2*math.pi*Ct*h*rw**2 )
     
-    pwf0 = pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t)
+    pwf_exact = pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t)
+
+    log_t = np.log(t)
+    log_pwf_exact = np.log(pwf_exact)
 
     fig, ax = plt.subplots()   
-    ax.plot(t, pwf0)
+    ax.plot(log_t, log_pwf_exact)
 
     #  шум начало
 
     rng = np.random.default_rng()
-    noise = 0.001*pi* rng.normal(size=t.size)
-    pdata = pwf0 + noise
-    pdata = np.array(pdata)
+    noise = np.array(0.001*pi* rng.normal(size=t.size))
+    pdata = pwf_exact + noise
+    log_pdata = np.log(np.array(pdata))
     # # шум конец
-    ax.plot(t, pdata, color="green")
+    ax.plot(log_t, log_pdata, color="green")
     
     
 
-    f = lambda x, k_new, Skin_new, Cs_new: pwf(k_new, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, x)
+    f = lambda x, k_new, Skin_new, Cs_new: np.log(pwf(k_new, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, x))
+    # ax.plot(t, f(t, 2e-15, 0, 0))
 
-
-    popt, pcov = curve_fit(f, t, pdata, p0=[1e-15, 0, 0])
+    popt, pcov = curve_fit(f, t, log_pdata, p0=[1.0e-15, 0, 0], method='dogbox')
     k_new, Skin_new, Cs_new = popt
     print(k_new, Skin_new, Cs_new)
-    ax.plot(t, f(t,k_new, Skin_new, Cs_new ))
+    ax.plot(log_t, f(t,k_new, Skin_new, Cs_new ))
 
 
 
