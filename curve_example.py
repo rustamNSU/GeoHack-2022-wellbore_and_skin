@@ -18,9 +18,9 @@ if __name__ == "__main__":
     
 
     k = 2.0e-15
-    Skin = 0
-    t = np.linspace(1, 40000, 40)   #*3600*1
-    Cs = 0         # 5*( 2*math.pi*Ct*h*rw**2 )
+    Skin = 3.0
+    t = np.linspace(1, 100, 20)   #*3600*1
+    Cs = 5*( 2*math.pi*Ct*h*rw**2 )
     
     pwf_exact = pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t)
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     #  шум начало
 
     rng = np.random.default_rng()
-    noise = np.array(0.001*pi* rng.normal(size=t.size))
+    noise = np.array(0.0001*pi* rng.normal(size=t.size))
     pdata = pwf_exact + noise
     log_pdata = np.log(np.array(pdata))
     # # шум конец
@@ -41,14 +41,23 @@ if __name__ == "__main__":
     
     
 
-    f = lambda x, k_new, Skin_new, Cs_new: np.log(pwf(k_new, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, x))
+    # f = lambda x, k_new, Skin_new, Cs_new: np.log(pwf(k_new, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, x))
+    f = lambda x, Skin_new, Cs_new: np.log(pwf(k, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, x))
+
     # ax.plot(t, f(t, 2e-15, 0, 0))
 
-    popt, pcov = curve_fit(f, t, log_pdata, p0=[1.0e-15, 0, 0], method='dogbox')
-    k_new, Skin_new, Cs_new = popt
-    print(k_new, Skin_new, Cs_new)
-    ax.plot(log_t, f(t,k_new, Skin_new, Cs_new ))
-
+    # popt, pcov = curve_fit(f, t, log_pdata, bounds=([1.0e-17, -10.0, 0.0],[1.0e-13, 10.0, 1.0e-6]), p0=[1.5e-15, 0.0, 1.0e-9], method='trf')
+      # k_new, Skin_new, Cs_new = popt
+    # print(k_new, Skin_new, Cs_new)
+    # print("exact: ", k, Skin, Cs)
+    # ax.plot(log_t, f(t,k_new, Skin_new, Cs_new ))
+    # print(pcov)
+    popt, pcov = curve_fit(f, t, log_pdata, bounds=([-10.0, 0.0],[10.0, 1.0e-6]), p0=[0.0, 1.0e-9], method='trf')
+    Skin_new, Cs_new = popt
+    print(Skin_new, Cs_new)
+    print("exact: ", Skin, Cs)
+    ax.plot(log_t, f(t, Skin_new, Cs_new ))
+    print(pcov)
 
 
     ax.legend() 

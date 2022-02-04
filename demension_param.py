@@ -3,7 +3,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, q, t):
+def pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t):
     Cd = Cs / ( 2*math.pi*Ct*h*rw**2 )
     td = t*(k / (phi*mu*Ct*rw**2))
     pwD = p_wd(Skin, Cd, td)
