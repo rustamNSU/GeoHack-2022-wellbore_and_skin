@@ -6,9 +6,6 @@ import matplotlib.pyplot as plt
 def pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t, tp=0):
     Cd = Cs / ( 2*math.pi*Ct*h*rw**2 )
     td = t*(k / (phi*mu*Ct*rw**2))
-    for t in td:
-        if t<0:
-            print(t)
     pwD = p_wd(Skin, Cd, td)
     pwf = pi - pwD*q*B*mu / (2*math.pi*k*h)
     pwf[t<tp]=pi
