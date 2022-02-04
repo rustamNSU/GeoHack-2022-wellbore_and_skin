@@ -6,37 +6,49 @@ import math
 import matplotlib.pyplot as plt
 from superposition import pwf
 
-if __name__ == "__main__":
-    h = 45
-    phi = 0.2
-    Ct = 2.03e-9
-    pi = 20.0e6
-    mu = 1.0e-3
-    B = 1
-    rw = 0.15
-    q = 3.0/24/3600
-    
+class InputData:
+    def __init__(self):
+        self.h = 45
+        self.phi = 0.2
+        self.Ct = 2.03e-9
+        self.pi = 20.0e6
+        self.mu = 1.0e-3
+        self.B = 1
+        self.rw = 0.15
+        self.q = 3.0/24/3600
 
-    k = 2.0e-15
-    Skin = 3.0
+        pwf_exact = pwf(self.k, self.Skin, self.Cs, self.B, self.Ct, self.h, self.pi, self.phi, self.mu, self.rw, self.q, self.t)
+        rng = np.random.default_rng()
+        noise = np.array(0.0001*pi* rng.normal(size=self.t.size))
+        self.pdata = pwf_exact + noise
+        
+
+
+
+def get_optimization_coef(input_data, twf_data, q_data, tp_data=0):
+    
+    h = input_data.h
+    phi = input_data.phi
+    Ct = input_data.Ct
+    pi = input_data.pi
+    mu = input_data.mu
+    B = input_data.B
+    rw = input_data.rw
+    q = input_data.q
+    k = input_data.k
+    Skin = input_data.Skin  
+    pdata = input_data.pdata
     t = np.linspace(1, 100, 20)   #*3600*1
     Cs = 5*( 2*math.pi*Ct*h*rw**2 )
-    
-    pwf_exact = pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t)
+    log_pdata = np.log(np.array(pdata))
 
     log_t = np.log(t)
-    log_pwf_exact = np.log(pwf_exact)
+    # log_pwf_exact = np.log(pwf_exact)
 
     fig, ax = plt.subplots()   
-    ax.plot(log_t, log_pwf_exact)
+    # ax.plot(log_t, log_pwf_exact)
 
-    #  шум начало
-
-    rng = np.random.default_rng()
-    noise = np.array(0.0001*pi* rng.normal(size=t.size))
-    pdata = pwf_exact + noise
-    log_pdata = np.log(np.array(pdata))
-    # # шум конец
+    
     ax.plot(log_t, log_pdata, color="green")
     
     
@@ -62,3 +74,4 @@ if __name__ == "__main__":
 
     ax.legend() 
     plt.show()   
+    return k, Skin, Cs
