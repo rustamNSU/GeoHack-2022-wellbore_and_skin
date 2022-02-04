@@ -74,4 +74,4 @@ def get_optimization_coef(input_data, twf_data, q_data, tp_data=0):
 
     ax.legend() 
     plt.show()   
-    return k, Skin, Cs
+    return Skin_new, Cs_new   # , k_new
