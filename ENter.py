@@ -1,8 +1,10 @@
 import sys
-from PySide6.QtWidgets import (QWidget,QMainWindow,QHBoxLayout,QVBoxLayout,QFileDialog, QLabel, QLineEdit, QGridLayout, QApplication,QPushButton)
+from PySide6.QtWidgets import (QWidget,QMainWindow,QMessageBox,QHBoxLayout,QVBoxLayout,QFileDialog, QLabel, QLineEdit, QGridLayout, QApplication,QPushButton)
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 from matplotlib.figure import Figure
 
@@ -35,7 +37,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        
+        self.Value = 0
         self.main_widget = QWidget()
         self.main_layout = QHBoxLayout()
         self.initUI()
@@ -77,32 +79,37 @@ class MainWindow(QMainWindow):
         self.runButton = QPushButton("RUN")
         self.openButton = QPushButton("OPEN")
         
-        self.openButton.clicked.connect(self._on_open_data)
-
+        
+        self.warning = QLabel('-')
         self.titleEdit = QLabel('-')
         self.authorEdit = QLabel('-')
         self.reviewEdit = QLabel('-')
         self.otvetEdit = QLabel('-')
+        
+        self.runButton.clicked.connect(self.run_change)    
+        self.openButton.clicked.connect(self._on_open_data)
 
         grid = QGridLayout()
         data_widget.setLayout(grid)
         grid.setSpacing(10)
+        
+        #grid.addWidget(self.warning, 2, 0)
 
         grid.addWidget(self.runButton, 1, 0)
         
         grid.addWidget(self.openButton ,1, 1 )
         
-        grid.addWidget(title, 2, 0)
-        grid.addWidget(self.titleEdit, 2, 1)
+        grid.addWidget(title, 3, 0)
+        grid.addWidget(self.titleEdit, 3, 1)
 
-        grid.addWidget(author, 3, 0)
-        grid.addWidget(self.authorEdit, 3, 1)
+        grid.addWidget(author, 4, 0)
+        grid.addWidget(self.authorEdit, 4, 1)
 
-        grid.addWidget(review, 4, 0)
-        grid.addWidget(self.reviewEdit, 4, 1)
+        grid.addWidget(review, 5, 0)
+        grid.addWidget(self.reviewEdit, 5, 1)
         
-        grid.addWidget(otvet, 5, 0)
-        grid.addWidget(self.otvetEdit, 5, 1)
+        grid.addWidget(otvet, 6, 0)
+        grid.addWidget(self.otvetEdit, 6, 1)
         
         
      #   dr = DataCanvas(self, width=20, height=20, dpi=100)
@@ -114,9 +121,21 @@ class MainWindow(QMainWindow):
         file_name = QFileDialog.getOpenFileName(self)
         self.input_path = file_name[0]
         self.otvetEdit.setText(self.input_path)
+        self.Value = 1
+    def run_change(self):
+        if self.Value == 0:
+            error = QMessageBox.question(self,
+                        "Ошибка", "Файл не обнаружен",
+                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if error == QMessageBox.Yes:
+                event.accept()
+            else:
+                event.ignore()
+            self.Value = 1
+
         
-
-
+            
+ 
 
 if __name__ == '__main__':
 
