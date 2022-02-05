@@ -18,7 +18,7 @@ q = 3.0/24/3600
 
 
 
-Skin = 0.0 
+Skin = 1.0 
 k=2.0e-15
 t = np.linspace(1, 100, 20)   #*3600*1
 Cs = 5*( 2*math.pi*Ct*h*rw**2 )
