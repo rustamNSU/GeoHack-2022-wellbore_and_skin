@@ -3,7 +3,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-def pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, q, t, tp=0):
+def pwf(k, Skin, Cs, B, Ct, h, pi, phi, mu, rw, q, t, tp=0, not_site = False):
     Cd = Cs / ( 2*math.pi*Ct*h*rw**2 )
     td = t*(k / (phi*mu*Ct*rw**2))
     tpd = tp*(k / (phi*mu*Ct*rw**2))
@@ -12,7 +12,11 @@ def pwf(k, Skin, Cs, B, Ct, h, pi, mu, rw, q, t, tp=0):
     # print("tp={}".format(tp))
     # print(t<tp)
     pwf[t<tp]=pi
-    return pwf
+    if not_site == False:
+        return np.array(pwf, dtype=float)
+    else:
+        return np.array(pwf, dtype=float), Cd, td, pwD
+    
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ def laplace_p_wd(Skin, CDstor, s, tp=0):
 
 def p_wd(Skin, CDstor, tt, tp=0):
     fp = lambda p: laplace_p_wd(Skin, CDstor, p, tp)
-    p_wd = [mp.invertlaplace(fp, t, method='stehfest', degree = 10) for t in tt]
+    p_wd = [float(mp.invertlaplace(fp, t, method='stehfest', degree = 10)) for t in tt]
     return np.array(p_wd)
 
 
