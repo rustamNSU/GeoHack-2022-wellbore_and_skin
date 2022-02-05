@@ -4,11 +4,11 @@ from PySide6.QtWidgets import (QWidget,QMainWindow,QMessageBox,QHBoxLayout,QVBox
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
 import numpy as np
-
+from PySide6.QtGui import QIcon
 
 from matplotlib.figure import Figure
 from preproccesing import FieldData, read_field_data_xlsx
-from test_plot import test_plot
+from plot_field_data import plot_field_pressure, plot_field_debit
 
 # Matplotlib window
 class MplCanvas(FigureCanvasQTAgg):
@@ -18,17 +18,18 @@ class MplCanvas(FigureCanvasQTAgg):
         
         
         self.ax1 = self.fig.add_subplot(2, 2, 1)
-        
         self.ax2 = self.fig.add_subplot(2, 2, 2)
         self.ax3 = self.fig.add_subplot(2, 2, 3)
         self.ax4 = self.fig.add_subplot(2, 2, 4)
+      
+        
         
         super(MplCanvas, self).__init__(self.fig)
     
-    def plot_test_plot(self):
-        test_plot(self.fig, self.ax1)
-        
-        
+    def plot_test_plot(self, field_data):
+        plot_field_pressure(self.fig, self.ax1, field_data)
+        plot_field_debit(self.fig, self.ax3, field_data)
+        #self.ax.cla()
     
         
 class DataCanvas(FigureCanvasQTAgg):
@@ -53,12 +54,19 @@ class MainWindow(QMainWindow):
         self.initUI()
         self.init_mpl_canvas()
         self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('Review')
+        self.setWindowTitle('GDISapp')
+
+        self.setWindowIcon(QIcon('nsu.png'))
         
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
+        self.setStyleSheet("background-color: #ffcc99;")
         
         self.show()
+        
+        
+        
+        
         
     def init_mpl_canvas(self):
         figure_widget = QWidget()
@@ -135,10 +143,6 @@ class MainWindow(QMainWindow):
         
     def read_data(self):
         self.field_data = read_field_data_xlsx(self.input_path)
-        self.data_pwf = self.field_data.pwf
-        self.data_pTime = self.field_data.pTime
-        self.data_q = self.field_data.q
-        self.data_qTime = self.field_data.qTime
         
     def run_change(self):
         if self.Value == 0:
@@ -151,9 +155,17 @@ class MainWindow(QMainWindow):
                 event.ignore()
             self.Value = 1
         else:
+            
             self.read_data()
-            self.mpl_canvas.plot_test_plot()
+            # self.mpl_canvas.cla()
+            self.mpl_canvas.plot_test_plot(self.field_data)
+            #self.mpl_canvas.clf()
+            
             self.mpl_canvas.draw()
+            
+         
+            
+            
 
         
             
