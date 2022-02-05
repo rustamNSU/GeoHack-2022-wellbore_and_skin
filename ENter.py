@@ -7,19 +7,29 @@ import numpy as np
 
 
 from matplotlib.figure import Figure
-
+from preproccesing import FieldData, read_field_data_xlsx
+from test_plot import test_plot
 
 # Matplotlib window
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.ax1 = fig.add_subplot(2, 2, 1)
-        self.ax2 = fig.add_subplot(2, 2, 2)
-        self.ax3 = fig.add_subplot(2, 2, 3)
-        self.ax4 = fig.add_subplot(2, 2, 4)
+        self.fig = Figure(figsize=(width, height), dpi=dpi)
         
-        super(MplCanvas, self).__init__(fig)
+        
+        self.ax1 = self.fig.add_subplot(2, 2, 1)
+        
+        self.ax2 = self.fig.add_subplot(2, 2, 2)
+        self.ax3 = self.fig.add_subplot(2, 2, 3)
+        self.ax4 = self.fig.add_subplot(2, 2, 4)
+        
+        super(MplCanvas, self).__init__(self.fig)
+    
+    def plot_test_plot(self):
+        test_plot(self.fig, self.ax1)
+        
+        
+    
         
 class DataCanvas(FigureCanvasQTAgg):
 
@@ -41,7 +51,7 @@ class MainWindow(QMainWindow):
         self.main_widget = QWidget()
         self.main_layout = QHBoxLayout()
         self.initUI()
-        self.get_plot_one()
+        self.init_mpl_canvas()
         self.setGeometry(300, 300, 350, 300)
         self.setWindowTitle('Review')
         
@@ -50,15 +60,15 @@ class MainWindow(QMainWindow):
         
         self.show()
         
-    def get_plot_one(self):
+    def init_mpl_canvas(self):
         figure_widget = QWidget()
         figure_layout = QVBoxLayout()
         
-        sc = MplCanvas(self, width=20, height=20, dpi=100)
-        toolbar = NavigationToolbar(sc, self)
+        self.mpl_canvas = MplCanvas(self, width=20, height=20, dpi=100)
+        toolbar = NavigationToolbar(self.mpl_canvas, self)
         
         figure_layout.addWidget(toolbar)
-        figure_layout.addWidget(sc)
+        figure_layout.addWidget(self.mpl_canvas)
 
         figure_widget.setLayout(figure_layout)
         self.main_layout.addWidget(figure_widget)
@@ -70,9 +80,9 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(data_widget)
         
         
-        title = QLabel('K')
-        author = QLabel('SKIN')
-        review = QLabel('Cd')
+        k_label = QLabel('K')
+        skin_label = QLabel('SKIN')
+        cd_label = QLabel('Cd')
         otvet = QLabel('Path')
         
         
@@ -80,10 +90,10 @@ class MainWindow(QMainWindow):
         self.openButton = QPushButton("OPEN")
         
         
-        self.warning = QLabel('-')
-        self.titleEdit = QLabel('-')
-        self.authorEdit = QLabel('-')
-        self.reviewEdit = QLabel('-')
+        #self.warning = QLabel('-')
+        self.k_Edit = QLabel('-')
+        self.skin_Edit = QLabel('-')
+        self.cd_Edit = QLabel('-')
         self.otvetEdit = QLabel('-')
         
         self.runButton.clicked.connect(self.run_change)    
@@ -99,14 +109,14 @@ class MainWindow(QMainWindow):
         
         grid.addWidget(self.openButton ,1, 1 )
         
-        grid.addWidget(title, 3, 0)
-        grid.addWidget(self.titleEdit, 3, 1)
+        grid.addWidget(k_label, 3, 0)
+        grid.addWidget(self.k_Edit, 3, 1)
 
-        grid.addWidget(author, 4, 0)
-        grid.addWidget(self.authorEdit, 4, 1)
+        grid.addWidget(skin_label, 4, 0)
+        grid.addWidget(self.skin_Edit, 4, 1)
 
-        grid.addWidget(review, 5, 0)
-        grid.addWidget(self.reviewEdit, 5, 1)
+        grid.addWidget(cd_label, 5, 0)
+        grid.addWidget(self.cd_Edit, 5, 1)
         
         grid.addWidget(otvet, 6, 0)
         grid.addWidget(self.otvetEdit, 6, 1)
@@ -122,6 +132,14 @@ class MainWindow(QMainWindow):
         self.input_path = file_name[0]
         self.otvetEdit.setText(self.input_path)
         self.Value = 1
+        
+    def read_data(self):
+        self.field_data = read_field_data_xlsx(self.input_path)
+        self.data_pwf = self.field_data.pwf
+        self.data_pTime = self.field_data.pTime
+        self.data_q = self.field_data.q
+        self.data_qTime = self.field_data.qTime
+        
     def run_change(self):
         if self.Value == 0:
             error = QMessageBox.question(self,
@@ -132,6 +150,10 @@ class MainWindow(QMainWindow):
             else:
                 event.ignore()
             self.Value = 1
+        else:
+            self.read_data()
+            self.mpl_canvas.plot_test_plot()
+            self.mpl_canvas.draw()
 
         
             
