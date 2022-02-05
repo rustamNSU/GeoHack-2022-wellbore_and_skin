@@ -153,7 +153,6 @@ class MainWindow(QMainWindow):
                 event.accept()
             else:
                 event.ignore()
-            self.Value = 1
         else:
             
             self.read_data()
