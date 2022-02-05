@@ -125,7 +125,7 @@ class MainWindow(QMainWindow):
     def run_change(self):
         if self.Value == 0:
             error = QMessageBox.question(self,
-                        "Ошибка", "Файл не обнаружен",
+                        "Ошибка", "Файл не обнаружен!",
                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if error == QMessageBox.Yes:
                 event.accept()
