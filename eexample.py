@@ -1,10 +1,15 @@
 import sys
-
+import pylab
+import numpy
+from datetime import datetime
+import numpy as np
 import matplotlib.pyplot as plt
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QApplication
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from pressure import p_wd
+from preproccesing import read_field_data_xlsx
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -14,15 +19,17 @@ class MplCanvas(FigureCanvasQTAgg):
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
     
-
+    
 
 class MainWindow(QMainWindow):
-
+    
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
-
+        super(MainWindow, self).__init__(*args, **kwargs)  
         sc = MplCanvas(self, width=20, height=20, dpi=100)
-        sc.axes.plot([0,1,2,3,4], [10,1,20,3,40])
+          
+        P, T = read_field_data_xlsx('data/GDIS.xlsx')
+        sc.axes.plot(T, P, label = "График")
+    
 
 
         # Create toolbar, passing canvas as first parament, parent (self, the MainWindow) as second.
@@ -31,7 +38,6 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
         layout.addWidget(toolbar)
         layout.addWidget(sc)
-
         # Create a placeholder widget to hold our toolbar and canvas.
         widget = QWidget()
         widget.setLayout(layout)
