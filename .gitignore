@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 date_seconds.txt
 data/.~lock.GDIS.xlsx#
+file.txt
