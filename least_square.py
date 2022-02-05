@@ -89,25 +89,26 @@ def get_optimization_coef(input_data, twf_data, q_data, tp_data=0):   # pdata
         # log_pwD_field = np.log(( 2*math.pi*k*h*(pi - pdata) ) / (q*B*mu))
         log_pwD = array_not_size[3]
         log_pwD_field = ( 2*math.pi*k*h*(pi - pdata) ) / (q*B*mu)
-        difference = np.linalg.norm(log_pwD - log_pwD_field, ord=1)
+        difference = np.linalg.norm(log_pwD - log_pwD_field, ord=2)
         return difference
 
 
-        
-    res = least_squares(F, x0_array, bounds=([1.0e-17, -10.0, 0.0], [1.0e-13, 10.0, 1.0e-6]), method='dogbox')
+        # bounds=([1.0e-17, -10.0, 0.0], [1.0e-13, 10.0, 1.0e-6]), method='trf'
+    res = least_squares(F, x0_array, method='trf', x_scale=[1.0e-15, 1.0, 1.0e-8])
     [k_new, Skin_new, Cs_new] = res.x
     print("no exact: ", k_new, Skin_new, Cs_new)
     print("exacr: ", k, Skin, Cs)
     pwf_new = pwf(k_new, Skin_new, Cs_new, B, Ct, h, pi, phi, mu, rw, q, t_delta_t)
 
-    # ax.plot(t, pwf_new, color="red", label="k={}, Skin={}, Cs={}".format(k_new, Skin_new, Cs_new))
-    # log_pwf_new = np.log(pwf_new)
+    ax.plot(t_delta_t, pwf_new, color="red", label="k={}, Skin={}, Cs={}".format(k_new, Skin_new, Cs_new))
+    ax.plot(t_delta_t, pdata, color="black", label="k={}, Skin={}, Cs={}".format(k, Skin, Cs))
+    log_pwf_new = np.log(pwf_new)
     # ax.plot(log_t, log_pwf_new, color="red", label="k={}, Skin={}, Cs={}".format(k_new, Skin_new, Cs_new))
-    # ax.set_xscale('log') 
-    # ax.set_yscale('log') 
+    ax.set_xscale('log') 
+    ax.set_yscale('log') 
 
-    # ax.legend() 
-    # plt.show()   
+    ax.legend() 
+    plt.show()   
     return 1 #Skin_new, Cs_new, k_new
 
 if __name__ == "__main__":
