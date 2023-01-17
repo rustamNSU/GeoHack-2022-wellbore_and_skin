@@ -1,0 +1,6 @@
+numpy
+matplotlib
+scipy
+pandas
+mpmath
+PySide6
